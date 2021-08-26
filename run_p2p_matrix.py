@@ -88,19 +88,6 @@ def round_half_up(n, decimals=0):
     return floor(n * multiplier + 0.5) / multiplier
 
 
-def convert(s):
-    """
-    Convert prediction output data to float and other formats
-    """
-    try:
-        return float(s)
-    except:
-        try:
-            return s.decode().strip()
-        except:
-            return s.strip()
-
-
 def make_voacap_predictions(freq):
     """
     Collect input, create input decks, run voacapl
@@ -151,24 +138,24 @@ def make_voacap_predictions(freq):
     voa_infile = f"cap_{float(freq):06.3f}.voa"
     print(f"Processing {freq:>6} MHz...")
     input_deck = ("Model    :VOACAP\n"
-           "Colors   :Black    :Blue     :Ignore   :Ignore   :Red      :Black with shading\n"
-           "Cities   :Receive.cty\n"
-           "Nparms   :    1\n"
-           "Parameter:REL      0\n"
-           f"Transmit : {tlat:>6}   {tlon:>7}   {txname:<20} {path}\n"
-           f"Pcenter  : {tlat:>6}   {tlon:>7}   {txname:<20}\n"
-           "Area     :    -180.0     180.0     -90.0      90.0\n"
-           f"Gridsize :  {gridsize:>3}    1\n"
-           f"Method   :   {method}\n"
-           "Coeffs   :CCIR\n"
-           f"{month_list}\n"
-           f"{ssn_list}\n"
-           f"{hour_list}\n"
-           f"{freq_list}\n"
-           f"System   :  {noise:>3}     {mintoa:.2f}   90   {mode:>2}     3.000     0.100\n"
-           f"Fprob    : 1.00 1.00 1.00 {es:.2f}\n"
-           f"Rec Ants :[voaant/{rxantenna:<14}]  gain=   0.0   0.0\n"
-           f"Tx Ants  :[voaant/{txantenna:<14}]  0.000  -1.0   {power:>8.4f}\n")
+                  "Colors   :Black    :Blue     :Ignore   :Ignore   :Red      :Black with shading\n"
+                  "Cities   :Receive.cty\n"
+                  "Nparms   :    1\n"
+                  "Parameter:REL      0\n"
+                  f"Transmit : {tlat:>6}   {tlon:>7}   {txname:<20} {path}\n"
+                  f"Pcenter  : {tlat:>6}   {tlon:>7}   {txname:<20}\n"
+                  "Area     :    -180.0     180.0     -90.0      90.0\n"
+                  f"Gridsize :  {gridsize:>3}    1\n"
+                  f"Method   :   {method}\n"
+                  "Coeffs   :CCIR\n"
+                  f"{month_list}\n"
+                  f"{ssn_list}\n"
+                  f"{hour_list}\n"
+                  f"{freq_list}\n"
+                  f"System   :  {noise:>3}     {mintoa:.2f}   90   {mode:>2}     3.000     0.100\n"
+                  f"Fprob    : 1.00 1.00 1.00 {es:.2f}\n"
+                  f"Rec Ants :[voaant/{rxantenna:<14}]  gain=   0.0   0.0\n"
+                  f"Tx Ants  :[voaant/{txantenna:<14}]  0.000  -1.0   {power:>8.4f}\n")
 
     # create prediction directories by year, by month, by frequency
     rundir = pdir / str(year) / months_list[month-1] / freq
@@ -247,8 +234,8 @@ rxant10 = config['antenna']['rxant10']
 
 # read years, months, start time, and time range from user
 print("Create Point-to-Point VOACAP prediction matrix.\n"
-"Copyright 2021 Jari Perkiömäki OH6BG.\n"
-)
+      "Copyright 2021 Jari Perkiömäki OH6BG.\n"
+      )
 run_years = []
 while not len(run_years):
     try:
@@ -296,7 +283,8 @@ for year in run_years:
         # no SSN found in file, ask for it
         while not 0 <= ssn <= 200:
             try:
-                ssn = int(input(f"\nEnter sunspot number (SSN) for {months_list[month-1]} {year}: "))
+                ssn = int(
+                    input(f"\nEnter sunspot number (SSN) for {months_list[month-1]} {year}: "))
             except ValueError:
                 ssn = -1
 
@@ -307,4 +295,3 @@ for year in run_years:
                 pass
 
 print(f"\nOutput directory: {pdir}")
-
