@@ -234,8 +234,7 @@ rxant10 = config['antenna']['rxant10']
 
 # read years, months, start time, and time range from user
 print("Create Point-to-Point VOACAP prediction matrix.\n"
-      "Copyright 2021 Jari Perkiömäki OH6BG.\n"
-      )
+      "Copyright 2021 Jari Perkiömäki OH6BG.\n")
 run_years = []
 while not len(run_years):
     try:

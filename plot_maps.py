@@ -30,12 +30,6 @@ snrplot = f"{plot_base}/voaAreaPlot.py -f -d 3 -o"
 snr90plot = f"{plot_base}/voaAreaPlot.py -f -d 4 -o"
 sdbwplot = f"{plot_base}/voaAreaPlot.py -f -d 5 -o"
 
-print("Plot coverage maps from VOACAP VG files.\n"
-"Copyright 2021 Jari Perkiömäki OH6BG.\n")
-
-INPUT_PATH = Path(input("Enter root path to VG files: ").strip())
-infiles = list(INPUT_PATH.rglob('*.voa'))
-
 
 def plot_maps(f):
     prefix = "_".join(str(f.parent).split("/")[-3:])
@@ -62,7 +56,8 @@ def plot_maps(f):
         relplotcmd = f"{relplot} {reldir / f'{prefix}_REL_{utc.upper()}.png'} -v {vg_number} {f}"
         args = shlex.split(relplotcmd)
         try:
-            cp = subprocess.run(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE, timeout=10)
+            cp = subprocess.run(args, stderr=subprocess.PIPE,
+                                stdout=subprocess.PIPE, timeout=10)
         except Exception as msg:
             print("ERROR REL PLOT", msg)
             sys.exit()
@@ -73,13 +68,15 @@ def plot_maps(f):
             try:
                 snr50dir.mkdir(parents=True, exist_ok=True)
             except:
-                print('[ERROR] Cannot create directory for SNR50 maps: {snr50dir}')
+                print(
+                    '[ERROR] Cannot create directory for SNR50 maps: {snr50dir}')
                 sys.exit()
 
         snrplotcmd = f"{snrplot} {snr50dir / f'{prefix}_SNR50_{utc.upper()}.png'} -v {vg_number} {f}"
         args = shlex.split(snrplotcmd)
         try:
-            cp = subprocess.run(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE, timeout=10)
+            cp = subprocess.run(args, stderr=subprocess.PIPE,
+                                stdout=subprocess.PIPE, timeout=10)
         except Exception as msg:
             print("ERROR SNR50 PLOT", msg)
             sys.exit()
@@ -90,13 +87,15 @@ def plot_maps(f):
             try:
                 snr90dir.mkdir(parents=True, exist_ok=True)
             except:
-                print('[ERROR] Cannot create directory for SNR90 maps: {snr90dir}')
+                print(
+                    '[ERROR] Cannot create directory for SNR90 maps: {snr90dir}')
                 sys.exit()
 
         snr90plotcmd = f"{snr90plot} {snr90dir / f'{prefix}_SNR90_{utc.upper()}.png'} -v {vg_number} {f}"
         args = shlex.split(snr90plotcmd)
         try:
-            cp = subprocess.run(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE, timeout=10)
+            cp = subprocess.run(args, stderr=subprocess.PIPE,
+                                stdout=subprocess.PIPE, timeout=10)
         except Exception as msg:
             print("ERROR SNR90 PLOT", msg)
             sys.exit()
@@ -107,17 +106,28 @@ def plot_maps(f):
             try:
                 sdbwdir.mkdir(parents=True, exist_ok=True)
             except:
-                print('[ERROR] Cannot create directory for SDBW maps: {sdbwdir}')
+                print(
+                    '[ERROR] Cannot create directory for SDBW maps: {sdbwdir}')
                 sys.exit()
 
         sdbwplotcmd = f"{sdbwplot} {sdbwdir / f'{prefix}_SDBW_{utc.upper()}.png'} -v {vg_number} {f}"
         args = shlex.split(sdbwplotcmd)
         try:
-            cp = subprocess.run(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE, timeout=10)
+            cp = subprocess.run(args, stderr=subprocess.PIPE,
+                                stdout=subprocess.PIPE, timeout=10)
         except Exception as msg:
             print("ERROR SDBW PLOT", msg)
             sys.exit()
 
+
+"""
+Set up paths
+"""
+print("Plot coverage maps from VOACAP VG files.\n"
+      "Copyright 2021 Jari Perkiömäki OH6BG.\n")
+
+INPUT_PATH = Path(input("Enter root path to VG files: ").strip())
+infiles = list(INPUT_PATH.rglob('*.voa'))
 
 with concurrent.futures.ThreadPoolExecutor(max_workers=90) as executor:
     for _ in executor.map(plot_maps, infiles):
