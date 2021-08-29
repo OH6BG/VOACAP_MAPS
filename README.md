@@ -26,7 +26,7 @@ This file contains the latest predictions of smoothed sunspot numbers (SSN) unti
 
 ## 1. Running 24-hour predictions for the months of Sep, Oct and Nov 2021 for all ham bands
 
-    user:~/voa$ ./p2p_matrix.py
+    user:~/voa$ ./run_p2p_matrix.py
     Create Point-to-Point VOACAP prediction matrix.
     Copyright 2021 OH6BG Jari Perkiömäki.
 
