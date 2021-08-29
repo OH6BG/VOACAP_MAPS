@@ -263,7 +263,7 @@ while not 0 <= start_time <= 23:
         start_time = -1
 
 time_range = 0
-while not 1 <= time_range < 24:
+while not 1 <= time_range <= 24:
     try:
         time_range = int(input("Enter time range in hours (1..24): "))
     except ValueError:
