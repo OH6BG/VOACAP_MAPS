@@ -1,5 +1,7 @@
 # VOACAP MAPS
 
+![](https://voacap.com/maps/2021_Nov_21.200_SDBW_13UT.png)
+
 VOACAP_MAPS is a collection of scripts to generate a matrix of VOACAP point-to-point propagation predictions, covering the entire planet. This matrix can be used to plot various coverage area maps. Currently, in this collection, there are two scripts just to do this and one to store results in a database:
 
 - **run_p2p_matrix.py** which helps you generate tens of thousands of point-to-point predictions
