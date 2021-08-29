@@ -23,23 +23,46 @@ import sqlite3
 import threading
 from natsort import natsorted, ns  # https://pypi.org/project/natsort/
 from pathlib import Path
-from pygeodesy.sphericalTrigonometry import LatLon
-from pygeodesy.dms import parseDMS2
+from math import acos, atan2, cos, pi, sin, sqrt
 
 
-def get_midpoint(lat1, lon1, lat2, lon2):
-    a = LatLon(lat1, lon1)
-    b = LatLon(lat2, lon2)
-    mplat, mplon = a.midpointTo(b).toStr().split(",")
-    return parseDMS2(mplat, mplon)
+def calculate_km_deg(lat1, lon1, lat2, lon2):
+    """
+    Adapted from hamlocation.py (c) 2009 James Watson
+    https://github.com/jawatson/pythonprop/blob/master/src/pythonprop/hamlocation.py
+    """
+    lo1 = -lon1 * pi / 180.0   # Convert degrees to radians
+    la1 = lat1 * pi / 180.0
+    lo2 = -lon2 * pi / 180.0
+    la2 = lat2 * pi / 180.0
 
+    # Get local earth radius
+    radius = local_earth_radius(lat1)
 
-def get_distance_bearing(lat1, lon1, lat2, lon2):
-    a = LatLon(lat1, lon1)
-    b = LatLon(lat2, lon2)
-    km = a.distanceTo(b) / 1000
-    deg = a.initialBearingTo(b)
+    # Calculates distance in km
+    km = acos(cos(la1) * cos(lo1) * cos(la2) * cos(lo2) + cos(la1) *
+              sin(lo1) * cos(la2) * sin(lo2) + sin(la1) * sin(la2)) * radius
+
+    # Calculates initial beam heading
+    deg = atan2(sin(lo1 - lo2) * cos(la2), cos(la1) * sin(la2) -
+                sin(la1) * cos(la2) * cos(lo1 - lo2)) / pi * 180
+    if deg < 0:
+        deg += 360
     return km, deg
+
+
+def local_earth_radius(lat):
+    """
+    Adapted from hamlocation.py (c) 2009 James Watson
+    https://github.com/jawatson/pythonprop/blob/master/src/pythonprop/hamlocation.py
+    """
+    # Hayford axes (1909)
+    a = 6378.388  # earth major axis (km) (equatorial axis)
+    b = 6356.912  # earth minor axis (km) (polar axis)
+    esq = (a * a - b * b) / (a * a)  # calculates eccentricity^2
+    la = lat * pi / 180.0  # convert latitude in radians
+    sla = sin(la)  # calculates sinus of latitude
+    return a * sqrt(1 - esq) / (1 - esq * sla * sla)
 
 
 def maiden2latlon(loc):
@@ -111,10 +134,9 @@ def collect_data(line):
                 d24,
                 d25,
                 d26) = struct.unpack(col_format, line)
-            midlat, midlon = get_midpoint(txlat, txlon, d1, d2)
-            km, deg = get_distance_bearing(txlat, txlon, d1, d2)
+            km, deg = calculate_km_deg(txlat, txlon, float(d1), float(d2))
             rows.append(tuple(list(map(convert, (utc[:-2], month, freq[:-3], txlat, txlon, d1, d2, d3, d4, d5, d6,
-                        d7, d8, d9, d10, d11, d12, d13, d14, d15, d16, d17, d18, d19, d20, d21, d22, d23, d24, d25, d26, midlat, midlon, km, deg)))))
+                        d7, d8, d9, d10, d11, d12, d13, d14, d15, d16, d17, d18, d19, d20, d21, d22, d23, d24, d25, d26, km, deg)))))
         except:
             return
 
@@ -186,14 +208,12 @@ c.execute("""CREATE TABLE IF NOT EXISTS points (
     sigup real,
     pwrct real,
     rangle real,
-    midlat real,
-    midlon real,
     km real,
     deg real
 )""")
 
 c.executemany(
-    "INSERT INTO points (utc,month,freq,txlat,txlon,rxlat,rxlon,muf,mode,tangle,delay,vhite,mufday,loss,dbu,sdbw,ndbw,snr,rpwrg,rel,mprob,sprob,tgain,rgain,snrxx,du,dl,siglw,sigup,pwrct,rangle,midlat,midlon,km,deg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", rows)
+    "INSERT INTO points (utc,month,freq,txlat,txlon,rxlat,rxlon,muf,mode,tangle,delay,vhite,mufday,loss,dbu,sdbw,ndbw,snr,rpwrg,rel,mprob,sprob,tgain,rgain,snrxx,du,dl,siglw,sigup,pwrct,rangle,km,deg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", rows)
 con.commit()
 
 print(f"\nTEST: Reading results from database '{database_name}'...\n")
