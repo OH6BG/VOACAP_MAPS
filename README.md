@@ -83,7 +83,7 @@ The month numbers can be given in any order, separated by a space; they will be 
 
 ## 2. Convert VOACAP prediction matrix to coverage maps
 
-Note that in Example 1 we generated a considerable number of prediction matrices, and the script below can be used to plot all of it to coverage maps.
+In Example 1 we generated a considerable number of prediction matrices, and the script below can be used to plot all of it to coverage maps. Running the maps will take a few minutes to complete!
 
     user:~/voa$ ./plot_maps.py
     Plot coverage maps from VOACAP VG files.
@@ -120,6 +120,8 @@ Note that in Example 1 we generated a considerable number of prediction matrices
     Processing 2021 Nov 14.100...
 
     Maps complete: /home/user/voa/predictions/12631402
+
+The root path (=directory) looks like this:
 
     user:~/voa/predictions/12631402$ ls -la
     total 180
