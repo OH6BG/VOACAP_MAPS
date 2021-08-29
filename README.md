@@ -6,6 +6,10 @@ VOACAP_MAPS is a collection of scripts to generate a matrix of VOACAP point-to-p
 - **plot_maps.py** which helps you plot the point-to-point predictions
 - **collect_data_to_database.py** helps you to parse massive point-to-point prediction files and store results in SQLite database
 
+Make the scripts executable by setting the "execute" bit as follows:
+
+    chmod +x run_p2p_matrix.py plot_maps.py collect_data_to_database.py
+
 However, to be able to plot VOACAP coverage area maps, you will need to first install James Watson's pythonprop package at https://github.com/jawatson/pythonprop
 
 Then, after having backed up the original voaAreaPlot.py from pythonprop in a safe place, replace that file with the one provided here. Also note that plotting the maps require a lot of other packages to be installed. See James Watson's page for further info.
@@ -24,7 +28,9 @@ This file contains the latest predictions of smoothed sunspot numbers (SSN) unti
 
 # Examples
 
-## 1. Running 24-hour predictions for the months of Sep, Oct and Nov 2021 for all ham bands
+## 1. Run 24 hours of predictions for Sep, Oct and Nov 2021 for all ham bands
+
+The month numbers can be given in any order, separated by a space; they will be sorted. The same applies to year numbers. In the beginning, start experimenting with a couple of months only if you want to run 24 hours of predictions on all bands as the data to be produced will be quite massive.
 
     user:~/voa$ ./run_p2p_matrix.py
     Create Point-to-Point VOACAP prediction matrix.
