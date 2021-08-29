@@ -21,7 +21,7 @@ import struct
 import time
 import sqlite3
 import threading
-from natsort import natsorted, ns  # https://pypi.org/project/natsort/
+from natsort import natsorted, ns
 from pathlib import Path
 from math import acos, atan2, cos, pi, sin, sqrt
 
