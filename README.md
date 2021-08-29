@@ -119,4 +119,16 @@ Note that in Example 1 we generated a considerable number of prediction matrices
     Processing 2021 Nov 5.300...
     Processing 2021 Nov 14.100...
 
-    Maps complete: /home/jpe/voa/predictions/12631402
+    Maps complete: /home/user/voa/predictions/12631402
+
+    user:~/voa/predictions/12631402$ ls -la
+    total 180
+    drwxr-xr-x 7 jpe jpe  4096 Aug 29 18:31 .
+    drwxr-xr-x 3 jpe jpe  4096 Aug 29 18:19 ..
+    drwxr-xr-x 5 jpe jpe  4096 Aug 29 18:21 2021
+    drwxr-xr-x 2 jpe jpe 36864 Aug 29 18:44 REL
+    drwxr-xr-x 2 jpe jpe 36864 Aug 29 18:44 SDBW
+    drwxr-xr-x 2 jpe jpe 40960 Aug 29 18:44 SNR50
+    drwxr-xr-x 2 jpe jpe 40960 Aug 29 18:44 SNR90
+
+The directories of REL, SDBW, SNR50 and SNR90 contain all the maps. The "2021" directory contains the raw VOACAP predictions.
