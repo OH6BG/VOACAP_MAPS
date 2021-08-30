@@ -175,3 +175,5 @@ You can store all the VOACAP prediction results into an SQLite3 database. While 
 
     Database complete: sep_oct_nov_2021.db
     user:~/voa$
+
+The size of the 'sep_oct_nov_2021.db' database is approximately 860 MB.
