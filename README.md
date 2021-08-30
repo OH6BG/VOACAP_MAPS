@@ -190,7 +190,9 @@ The Python code you can use for extracting data from the database can be as simp
     con = sqlite3.connect(DATABASE_NAME)
     c = con.cursor()
 
-    print(f"UT MON FREQ  MUF  SDBW   SNR50   REL   SNR90  RXLAT   RXLON")  # 'MUF' is MUFDay (percentage, not a frequency)
+    print(f"UT MON FREQ  MUF   SDBW  SNR50    REL  SNR90  RXLAT   RXLON     KM  DEG")
+    # 'MUF' is MUFday (percentage, not a frequency)
+
     with con:
         query = ("SELECT DISTINCT * FROM points "
                 "WHERE utc = 3 "
@@ -201,7 +203,8 @@ The Python code you can use for extracting data from the database can be as simp
         c.execute(query)
         result = c.fetchall()
         for r in result:
-            print(f"{r[0]:02d} {r[1]} {r[2]:.3f} {int(r[12]*100):>3} {r[15]:>6} {r[17]:>6}  {r[19]:.3f} {r[24]:6}  {r[5]:>5}  {r[6]:>6}")
+            print(f"{r[0]:02d} {r[1]} {r[2]:.3f} {int(r[12]*100):>3} {r[15]:>6} {r[17]:>6}  "
+                f"{r[19]:.3f} {r[24]:6}  {r[5]:>5}  {r[6]:>6} {r[31]:>6.0f}  {r[32]:3.0f}")
 
 Typically, you would change the line starting with "c.execute" which is where you define your query in detail. Also, you may need to change the "print" line according to what details you want to show from the lines found in the database. There is a lot of data which may not be interesting to show.
 
@@ -279,4 +282,12 @@ When you use coordinates, you would not use the beam heading or distance clauses
             "and rxlon BETWEEN -10 and 30")
     c.execute(query)
 
-In my example case, this query would yield 78 rows.
+In my example case, this query would yield 78 rows, starting as follows:
+
+    UT MON FREQ  MUF   SDBW  SNR50    REL  SNR90  RXLAT   RXLON     KM  DEG
+    03 Nov 7.100  71 -101.9   54.7  0.995   33.9   35.0   -10.0   3799  230
+    03 Nov 7.100  63 -102.3   53.9  0.989   30.9   35.0    -5.0   3617  223
+    03 Nov 7.100  98 -102.3   53.4  0.997   35.1   35.0     0.0   3457  215
+    03 Nov 7.100  98 -101.6   53.9  1.000   40.5   35.0     5.0   3325  208
+    03 Nov 7.100  98 -102.6   53.0  1.000   42.3   35.0    10.0   3223  200
+    03 Nov 7.100  97 -101.1   54.6  1.000   43.7   35.0    15.0   3157  191
