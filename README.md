@@ -133,4 +133,4 @@ The root path (=directory) looks like this:
     drwxr-xr-x 2 jpe jpe 40960 Aug 29 18:44 SNR50
     drwxr-xr-x 2 jpe jpe 40960 Aug 29 18:44 SNR90
 
-The directories of REL, SDBW, SNR50 and SNR90 contain all the maps. In this example, each map directory contains 648 maps (250+ MB). The "2021" directory contains the raw VOACAP predictions.
+The directories of REL, SDBW, SNR50 and SNR90 contain all the maps. In this example, each map directory contains 648 maps (3 months x 24 hours x 9 bands), a total of 250+ MB. The "2021" directory contains the raw VOACAP predictions.
