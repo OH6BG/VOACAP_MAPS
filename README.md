@@ -133,4 +133,45 @@ The root path (=directory) looks like this:
     drwxr-xr-x 2 jpe jpe 40960 Aug 29 18:44 SNR50
     drwxr-xr-x 2 jpe jpe 40960 Aug 29 18:44 SNR90
 
-The directories of REL, SDBW, SNR50 and SNR90 contain all the maps. In this example, each map directory contains 648 maps (3 months x 24 hours x 9 bands), a total of 250+ MB. The "2021" directory contains the raw VOACAP predictions.
+The directories of REL, SDBW, SNR50 and SNR90 contain all the maps. In this example, each map directory contains 648 maps (3 months x 24 hours x 9 bands), a total of 250+ MB for one directory. The "2021" directory contains the raw VOACAP predictions.
+
+## 3. Store all prediction output to database
+
+You can store all the VOACAP prediction results into an SQLite3 database. While processing (i.e. parsing) the VOACAP output files, the script will calculate the distances and the beam headings from your QTH to all the receive points in the global matrix. When the results are in the database, you can create a number of SQL queries to leverage the information.
+
+    user:~/voa$ ./collect_data_to_database.py
+    Store output from VOACAP VG files to SQlite3 database.
+    Copyright 2021 Jari Perkiömäki OH6BG.
+
+    Enter root path to VG files:  /home/user/voa/predictions/12631402
+
+    Parsing Nov  3.5 MHz 01 UTC: 0.2 secs
+    Parsing Nov  3.5 MHz 10 UTC: 0.2 secs
+    Parsing Nov  3.5 MHz 11 UTC: 0.2 secs
+    Parsing Nov  3.5 MHz 12 UTC: 0.2 secs
+
+    [... removed 640 processed lines here ...]
+
+    Parsing Sep 28.2 MHz 06 UTC: 0.3 secs
+    Parsing Sep 28.2 MHz 07 UTC: 0.2 secs
+    Parsing Sep 28.2 MHz 08 UTC: 0.3 secs
+    Parsing Sep 28.2 MHz 09 UTC: 0.3 secs
+
+    Enter database name: sep_oct_nov_2021.db
+
+    TEST: Reading results from database 'sep_oct_nov_2021.db'...
+
+    UT MON   FREQ MUF   SDBW  SNR50    REL  SNR90  RXLAT   RXLON     KM   DEG   MODE
+    01 Nov  3.500  99 -132.0   23.4  0.778    6.6   42.9   130.8   6713    53    2F2
+    01 Nov  5.300  93 -130.4   29.9  0.811    6.9   41.2   136.2   7088    50   F2F2
+    01 Nov  7.100  75 -130.3   33.0  0.821    6.3   40.0   137.0   7241    50   F2F2
+    01 Oct  5.300  98 -134.9   25.4  0.842   10.4   43.6   133.9   6761    50    2F2
+    01 Oct  7.100  82 -135.6   27.8  0.781    4.2   40.9   135.5   7096    50   F2F2
+    01 Oct 10.100  38 -144.8   21.4  0.658   -5.2   38.1   138.8   7495    49   F2F2
+    01 Sep  5.300  99 -138.8   21.5  0.799    8.6   41.2   125.0   6639    58    2F2
+    01 Sep  7.100  93 -138.1   25.2  0.796    6.9   42.7   133.6   6840    51   F2F2
+    01 Sep 10.100  63 -137.7   28.8  0.776    2.2   40.0   137.0   7241    50   F2F2
+    01 Sep 14.100   7 -138.2   31.0  0.806    4.5   37.5   138.3   7543    50   F2F2
+
+    Database complete: sep_oct_nov_2021.db
+    user:~/voa$
