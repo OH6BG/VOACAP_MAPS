@@ -216,6 +216,7 @@ Obviously, we will need to restrict the query further. What options do we have? 
 
 - select a specific month only
 - select an area of interest (e.g. by coordinates, by beam range, or by distance range)
+- set higher threshold values for SDBW, REL and SNRXX to eliminate edge cases
 
 ### 4.1. Select a specific month
 
