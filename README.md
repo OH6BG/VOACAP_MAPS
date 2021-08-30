@@ -204,7 +204,7 @@ The Python code you can use for extracting data from the database can be as simp
         result = c.fetchall()
         for r in result:
             print(f"{r[0]:02d} {r[1]} {r[2]:.3f} {int(r[12]*100):>3} {r[15]:>6} {r[17]:>6}  "
-                f"{r[19]:.3f} {r[24]:6}  {r[5]:>5}  {r[6]:>6} {r[31]:>6.0f}  {r[32]:3.0f}")
+                f"{r[19]:.3f} {r[24]:6}  {r[5]:>5}  {r[6]:>6} {r[31]:>6.0f}  {r[32]:>3.0f}")
 
 Typically, you would change the line starting with "c.execute" which is where you define your query in detail. Also, you may need to change the "print" line according to what details you want to show from the lines found in the database. There is a lot of data which may not be interesting to show.
 
