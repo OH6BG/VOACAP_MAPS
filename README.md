@@ -177,3 +177,67 @@ You can store all the VOACAP prediction results into an SQLite3 database. While 
     user:~/voa$
 
 The size of the 'sep_oct_nov_2021.db' database is approximately 860 MB.
+
+## 4. How to analyze VOACAP prediction results with SQLite?
+
+When all VOACAP prediction data is available from a database, you can then create simple and more sophisticated queries to understand how signal propagation behaves by month, by hour, by frequency from your TX QTH. Note that here we do not talk about propagation in a certain day in a month because this is what VOACAP cannot predict.
+
+The Python code you can use for extracting data from the database can be as simple as this:
+
+    #!/usr/bin/python
+    import sqlite3
+    DATABASE_NAME = 'sep_oct_nov_2021.db'
+    con = sqlite3.connect(DATABASE_NAME)
+    c = con.cursor()
+
+    print(f"UT MON FREQ  MUF  SDBW   SNR50   REL   SNR90  RXLAT   RXLON")  # 'MUF' is MUFDay (percentage, not a frequency)
+    with con:
+        c.execute("SELECT DISTINCT * FROM points WHERE utc = 3 and sdbw > -153 and rel >= 0.1 and snrxx >= 10 and freq = 7.100")
+        result = c.fetchall()
+        for r in result:
+            print(f"{r[0]:02d} {r[1]} {r[2]:.3f} {int(r[12]*100):>3} {r[15]:>6} {r[17]:>6}  {r[19]:.3f} {r[24]:6}  {r[5]:>5}  {r[6]:>6}")
+
+Typically, you would change the line starting with "c.execute" which is where you define your query in detail. Also, you may need to change the "print" line according to what details you want to show from the lines found in the database. There is a lot of data which may not be interesting to show.
+
+In this example, the above query will return all the 7679 rows in the database at 03 UTC on 7.100 MHz where SDBW (the Signal Power) is greater than -153 dBW (close to the noise level) and the REL (Reliability) is equal to or greater than 0.1 or 10%. Moreover, the predicted SNRXX or SNR90 (the Signal-to-Noise Ratio, SNR achieved at 90% of the days, or 27 days, in a month) needs to be equal to or more than 10 (dB/Hz), which is slighly less than the minimum acceptable SNR level (13 dB/Hz) for FT8.
+
+Please note that the query evaluates the entire global matrix in the months of September, October and November, and most probably there are results which are not of interest at all.
+
+Obviously, we will need to restrict the query further. What options do we have? For instance,
+
+- select a specific month only
+- select an area of interest (e.g. by coordinates, by beam range, or by distance range)
+
+### 4.1. Select a specific month
+
+Selecting a certain month for analysis is easy. In the SELECT query above, just add another WHERE clause for "month" (month = 'Nov') as follows:
+
+    c.execute("SELECT DISTINCT * FROM points WHERE month = 'Nov' and utc = 3 and sdbw > -153 and rel >= 0.1 and snrxx >= 10 and freq = 7.100")
+
+Note that all months can be referred to by their three-letter abbreviation: Jan, Feb, Mar, Apr, May, Jun, etc.
+
+### 4.2. Select a range of distances
+
+The above query will still result in 2695 hits. So, the query should be more restrictive. Let's focus on the predictions on circuits between distances of 6,000 and 10,000 km. Let's add another WHERE clause: "km BETWEEN 6000 and 10000".
+
+    c.execute("SELECT DISTINCT * FROM points WHERE month = 'Nov' and utc = 3 and sdbw > -153 and rel >= 0.1 and snrxx >= 10 and freq = 7.100" and km BETWEEN 6000 and 10000)
+
+### 4.3. Select a range of beam headings
+
+Adding the distance range still yielded 779 hits which is perhaps too much. Now we can try to restrict our query to a certain range of beam headings from our QTH. Let's add the following WHERE clause ("deg BETWEEN 270 and 300") to focus on the beam headings between 270 and 300 degrees, which is the Caribbean and Eastern USA region from my QTH.
+
+    c.execute("SELECT DISTINCT * FROM points WHERE month = 'Nov' and utc = 3 and sdbw > -153 and rel >= 0.1 and snrxx >= 10 and freq = 7.100" and km BETWEEN 6000 and 10000 and deg BETWEEN 270 and 300)
+
+Now the number of results is 82, which is pretty reasonable. The data shows that RX latitudes range from 5 to 42.5 degrees North, and RX longitudes from 55 to 90 degrees West.
+
+### 4.4. Select an area defined by coordinates
+
+If you are interested in exploring the propagation to a well-defined coordinate area, you can easily do so by using the following WHERE clause:
+
+    rxlat BETWEEN 35 and 60 and rxlon BETWEEN -10 and 30
+
+When you use coordinates, you would not use the beam heading or distance clauses. So, your query can now look like this:
+
+    c.execute("SELECT DISTINCT * FROM points WHERE month = 'Nov' and utc = 3 and sdbw > -153 and rel >= 0.1 and snrxx >= 10 and freq = 7.100" and rxlat BETWEEN 35 and 60 and rxlon BETWEEN -10 and 30)
+
+In my example case, this query would yield 78 rows.
