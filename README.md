@@ -199,7 +199,7 @@ The Python code you can use for extracting data from the database can be as simp
 
 Typically, you would change the line starting with "c.execute" which is where you define your query in detail. Also, you may need to change the "print" line according to what details you want to show from the lines found in the database. There is a lot of data which may not be interesting to show.
 
-In this example, the above query will return all the 7679 rows in the database at 03 UTC on 7.100 MHz where SDBW (the Signal Power) is greater than -153 dBW (close to the noise level) and the REL (Reliability) is equal to or greater than 0.1 or 10%. Moreover, the predicted SNRXX or SNR90 (the Signal-to-Noise Ratio, SNR achieved at 90% of the days, or 27 days, in a month) needs to be equal to or more than 10 (dB/Hz), which is slighly less than the minimum acceptable SNR level (13 dB/Hz) for FT8.
+In this example, the above query will return all the 7679 rows in the database at 03 UTC on 7.100 MHz where SDBW (the Signal Power) is greater than -153 dBW (close to the noise level) and the REL (Reliability) is equal to or greater than 0.1 or 10%. Moreover, the predicted SNRXX or SNR90 (the Signal-to-Noise Ratio, SNR achieved at 90% of the days, or 27 days, in a month) needs to be equal to or more than 10 (dB/Hz), which is slightly less than the minimum acceptable SNR level (13 dB/Hz) for FT8.
 
 Please note that the query evaluates the entire global matrix in the months of September, October and November, and most probably there are results which are not of interest at all.
 
@@ -210,7 +210,7 @@ Obviously, we will need to restrict the query further. What options do we have? 
 
 ### 4.1. Select a specific month
 
-Selecting a certain month for analysis is easy. In the SELECT query above, just add another WHERE clause for "month" (month = 'Nov') as follows:
+Selecting a certain month for analysis is easy. In the SELECT query above, just add another WHERE clause for "month" (e.g. month = 'Nov') as follows:
 
     c.execute("SELECT DISTINCT * FROM points WHERE month = 'Nov' and utc = 3 and sdbw > -153 and rel >= 0.1 and snrxx >= 10 and freq = 7.100")
 
