@@ -192,7 +192,13 @@ The Python code you can use for extracting data from the database can be as simp
 
     print(f"UT MON FREQ  MUF  SDBW   SNR50   REL   SNR90  RXLAT   RXLON")  # 'MUF' is MUFDay (percentage, not a frequency)
     with con:
-        c.execute("SELECT DISTINCT * FROM points WHERE utc = 3 and sdbw > -153 and rel >= 0.1 and snrxx >= 10 and freq = 7.100")
+        query = ("SELECT DISTINCT * FROM points "
+                "WHERE utc = 3 "
+                "and sdbw > -153 "
+                "and rel >= 0.1 "
+                "and snrxx >= 10 "
+                "and freq = 7.100")
+        c.execute(query)
         result = c.fetchall()
         for r in result:
             print(f"{r[0]:02d} {r[1]} {r[2]:.3f} {int(r[12]*100):>3} {r[15]:>6} {r[17]:>6}  {r[19]:.3f} {r[24]:6}  {r[5]:>5}  {r[6]:>6}")
@@ -212,7 +218,14 @@ Obviously, we will need to restrict the query further. What options do we have? 
 
 Selecting a certain month for analysis is easy. In the SELECT query above, just add another WHERE clause for "month" (e.g. month = 'Nov') as follows:
 
-    c.execute("SELECT DISTINCT * FROM points WHERE month = 'Nov' and utc = 3 and sdbw > -153 and rel >= 0.1 and snrxx >= 10 and freq = 7.100")
+    query = ("SELECT DISTINCT * FROM points "
+            "WHERE month = 'Nov' "
+            "and utc = 3 "
+            "and sdbw > -153 "
+            "and rel >= 0.1 "
+            "and snrxx >= 10 "
+            "and freq = 7.100")
+    c.execute(query)
 
 Note that all months can be referred to by their three-letter abbreviation: Jan, Feb, Mar, Apr, May, Jun, etc.
 
@@ -220,13 +233,30 @@ Note that all months can be referred to by their three-letter abbreviation: Jan,
 
 The above query will still result in 2695 hits. So, the query should be more restrictive. Let's focus on the predictions on circuits between distances of 6,000 and 10,000 km. Let's add another WHERE clause: "km BETWEEN 6000 and 10000".
 
-    c.execute("SELECT DISTINCT * FROM points WHERE month = 'Nov' and utc = 3 and sdbw > -153 and rel >= 0.1 and snrxx >= 10 and freq = 7.100" and km BETWEEN 6000 and 10000)
+    query = ("SELECT DISTINCT * FROM points "
+            "WHERE month = 'Nov' "
+            "and utc = 3 "
+            "and sdbw > -153 "
+            "and rel >= 0.1 "
+            "and snrxx >= 10 "
+            "and freq = 7.100 "
+            "and km BETWEEN 6000 and 10000")
+    c.execute(query)
 
 ### 4.3. Select a range of beam headings
 
 Adding the distance range still yielded 779 hits which is perhaps too much. Now we can try to restrict our query to a certain range of beam headings from our QTH. Let's add the following WHERE clause ("deg BETWEEN 270 and 300") to focus on the beam headings between 270 and 300 degrees, which is the Caribbean and Eastern USA region from my QTH.
 
-    c.execute("SELECT DISTINCT * FROM points WHERE month = 'Nov' and utc = 3 and sdbw > -153 and rel >= 0.1 and snrxx >= 10 and freq = 7.100" and km BETWEEN 6000 and 10000 and deg BETWEEN 270 and 300)
+    query = ("SELECT DISTINCT * FROM points "
+            "WHERE month = 'Nov' "
+            "and utc = 3 "
+            "and sdbw > -153 "
+            "and rel >= 0.1 "
+            "and snrxx >= 10 "
+            "and freq = 7.100 "
+            "and km BETWEEN 6000 and 10000 "
+            "and deg BETWEEN 270 and 300")
+    c.execute(query)
 
 Now the number of results is 82, which is pretty reasonable. The data shows that RX latitudes range from 5 to 42.5 degrees North, and RX longitudes from 55 to 90 degrees West.
 
@@ -238,6 +268,15 @@ If you are interested in exploring the propagation to a well-defined coordinate 
 
 When you use coordinates, you would not use the beam heading or distance clauses. So, your query can now look like this:
 
-    c.execute("SELECT DISTINCT * FROM points WHERE month = 'Nov' and utc = 3 and sdbw > -153 and rel >= 0.1 and snrxx >= 10 and freq = 7.100" and rxlat BETWEEN 35 and 60 and rxlon BETWEEN -10 and 30)
+    query = ("SELECT DISTINCT * FROM points "
+            "WHERE month = 'Nov' "
+            "and utc = 3 "
+            "and sdbw > -153 "
+            "and rel >= 0.1 "
+            "and snrxx >= 10 "
+            "and freq = 7.100 "
+            "and rxlat BETWEEN 35 and 60 "
+            "and rxlon BETWEEN -10 and 30")
+    c.execute(query)
 
 In my example case, this query would yield 78 rows.
