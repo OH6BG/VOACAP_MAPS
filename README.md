@@ -297,9 +297,9 @@ In my example case, this query would yield 78 rows, starting as follows:
 
 By default, SQLite does not offer basic statistical functions which can help you profile VOACAP output parameters such as SDBW or Signal Power. Luckily, the features of SQLite can be extended by compiling a third-party shared library. Let's follow these steps:
 
-- In Ubuntu, install the following package: sudo apt-get install libsqlite3-dev
-- Download the C code from sqlite.org: https://www.sqlite.org/contrib/download/extension-functions.c?get=25
-- Compile the C code into the same directory where your script to read from a database is located: gcc -fPIC -lm -shared extension-functions.c -o libsqlitefunctions.so
+- In Ubuntu, install the following package: **sudo apt-get install libsqlite3-dev**
+- Download the C code from sqlite.org: **https://www.sqlite.org/contrib/download/extension-functions.c?get=25**
+- Compile the C code into the same directory where your script to read from a database is located: **gcc -fPIC -lm -shared extension-functions.c -o libsqlitefunctions.so**
 - Add the following two lines to the Python script:
 
 ```
