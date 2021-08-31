@@ -292,3 +292,88 @@ In my example case, this query would yield 78 rows, starting as follows:
     03 Nov 7.100  98 -101.6   53.9  1.000   40.5   35.0     5.0   3325  208
     03 Nov 7.100  98 -102.6   53.0  1.000   42.3   35.0    10.0   3223  200
     03 Nov 7.100  97 -101.1   54.6  1.000   43.7   35.0    15.0   3157  191
+
+### 4.5. Extend SQLite with statistical functions
+
+By default, SQLite does not offer basic statistical functions which can help you profile VOACAP output parameters such as SDBW or Signal Power. Luckily, the features of SQLite can be extended by compiling a third-party shared library. Let's follow these steps:
+
+- In Ubuntu, install the following package: sudo apt-get install libsqlite3-dev
+- Download the C code from qslite.org: https://www.sqlite.org/contrib/download/extension-functions.c?get=25
+- Compile the C code in the same directory where your script to read from a database is located: gcc -fPIC -lm -shared extension-functions.c -o libsqlitefunctions.so
+- Add the following two lines to the Python script:
+
+```
+  con.enable_load_extension(True)
+  con.load_extension("./libsqlitefunctions.so")
+```
+
+As a result, try the new code against the database. The script below uses my example database:
+
+    #!/usr/bin/python
+    import sqlite3
+    DATABASE_NAME = 'sep_oct_nov_2021.db'
+    con = sqlite3.connect(DATABASE_NAME)
+    c = con.cursor()
+
+    print(f"UT MON FREQ  {'STDEV':>6}  LQUART  UQUART  MEDIAN  {'MEAN':>6}  {'MIN':>6}  {'MAX':>6}")
+
+    with con:
+        con.enable_load_extension(True)
+        con.load_extension("./libsqlitefunctions.so")
+        query = ("SELECT DISTINCT utc, month, freq, "
+                "stdev(sdbw), "
+                "lower_quartile(sdbw), "
+                "upper_quartile(sdbw), "
+                "median(sdbw), "
+                "avg(sdbw), "
+                "min(sdbw), "
+                "max(sdbw) FROM points "
+                "WHERE month = 'Sep' "
+                "and sdbw > -153 "
+                "and rel >= 0.1 "
+                "and snrxx >= 10 "
+                "and km BETWEEN 6000 and 10000 "
+                "and deg BETWEEN 270 and 300 "
+                "GROUP BY utc, month, freq")
+        c.execute(query)
+        result = c.fetchall()
+        try:
+            for r in result:
+                print(f"{r[0]:02} {r[1]} {r[2]:>4}  {r[3]:6.1f}  {r[4]:6.1f}  "
+                    f"{r[5]:6.1f}  {r[6]:6.1f}  {r[7]:6.1f}  {r[8]:6.1f}  {r[9]:6.1f}")
+        except Exception as msg:
+            print(r, msg)
+
+The script above would yield the following result:
+
+    UT MON FREQ   STDEV  LQUART  UQUART  MEDIAN    MEAN     MIN     MAX
+    01 Sep  3.5     4.8  -109.5  -102.1  -105.2  -106.2  -116.1   -96.7
+    01 Sep  5.3     4.3  -111.0  -106.2  -108.0  -108.6  -118.5   -99.1
+    01 Sep  7.1     2.7  -112.4  -109.1  -110.2  -111.1  -118.3  -106.5
+    02 Sep  3.5     4.5  -107.5  -100.9  -103.5  -104.2  -115.4   -95.3
+    02 Sep  5.3     3.4  -108.3  -103.9  -106.7  -106.5  -114.0   -98.7
+    02 Sep  7.1     2.9  -112.6  -108.4  -110.3  -110.8  -118.2  -106.7
+    03 Sep  3.5     5.3  -106.1   -98.0  -100.4  -101.9  -114.3   -91.0
+    03 Sep  5.3     4.4  -107.4  -100.6  -104.2  -104.1  -112.5   -93.7
+    03 Sep  7.1     3.7  -111.6  -106.4  -109.1  -109.2  -116.7  -103.0
+    04 Sep  3.5     5.4  -106.9   -99.4  -103.0  -103.0  -114.8   -91.4
+    04 Sep  5.3     4.4  -106.7  -100.4  -104.4  -104.0  -114.3   -95.0
+    04 Sep  7.1     3.1  -111.8  -106.7  -108.7  -109.2  -115.9  -104.2
+    05 Sep  3.5     4.5  -111.2  -104.4  -108.5  -107.8  -115.8   -97.6
+    05 Sep  5.3     5.1  -112.1  -105.1  -109.4  -109.1  -120.0   -97.9
+    05 Sep  7.1     3.0  -111.4  -108.1  -110.3  -110.3  -117.9  -105.3
+    [...]
+
+where
+
+| Abbreviation | Function              |
+| ------------ | --------------------- |
+| STDEV        | Standard Deviation    |
+| LQUART       | Lower Quartile        |
+| UQUART       | Upper Quartile        |
+| MEDIAN       | Median Value          |
+| MEAN         | Mean or Average Value |
+| MIN          | Minimum Value         |
+| MAX          | Maximum Value         |
+
+Only the bands which fulfill the WHERE clause will be shown. This means that not all bands are available at all UTC hours. Note also the the use of the GROUP BY clause where you determine the categorical variables you will filter the results by; in this case, UTC, month and frequency.
