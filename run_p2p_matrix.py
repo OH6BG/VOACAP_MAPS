@@ -22,10 +22,8 @@ from pathlib import Path
 from uuid import uuid4
 import configparser
 import datetime
-from pygeodesy.sphericalTrigonometry import LatLon
 from pygeodesy.dms import latDMS, lonDMS
 import shlex
-import struct
 import subprocess
 import sys
 
