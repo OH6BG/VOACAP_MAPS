@@ -53,7 +53,7 @@ import (
 // Hardcoded tool paths (edit to match your system)
 const (
 	pythonExe      = `/usr/bin/python`
-	plotScriptPath = `/home/jpe/pythonprop/src/pythonprop/voaAreaPlot.py`
+	plotScriptPath = `/home/user/pythonprop/src/pythonprop/voaAreaPlot.py`
 	perPlotTimeout = 60 * time.Second // default timeout; not prompted
 )
 
